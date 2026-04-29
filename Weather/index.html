@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather Journal</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>🌦️ Weather Journal</h2>
+
+  <!-- Inputs -->
+  <input type="date" id="date">
+  <input type="number" id="temp" placeholder="Temperature °C">
+  <input type="text" id="note" placeholder="Note (Sunny, Rainy...)">
+  <button onclick="addEntry()">Add Entry</button>
+
+  <!-- Entries -->
+  <h3>Entries</h3>
+  <ul id="entries"></ul>
+
+  <!-- Stats -->
+  <h3>Stats</h3>
+  <p>Average Temp: <span id="avg">0</span> °C</p>
+  <p>Best Day: <span id="best">-</span></p>
+  <p>Worst Day: <span id="worst">-</span></p>
+
+  <!-- Weekly -->
+  <h3>Weekly Summary</h3>
+  <p>This Week Avg: <span id="weekAvg">0</span> °C</p>
+  <p>Entries This Week: <span id="weekCount">0</span></p>
+
+  <!-- Export -->
+  <button onclick="exportData()">Export Report</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
