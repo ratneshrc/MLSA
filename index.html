@@ -1,71 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Weather Journal</title>
+<meta charset="UTF-8">
+<title>Calculator Pro</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
-
 body {
   margin: 0;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
-
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #141e30, #243b55);
-  overflow-x: hidden;
 }
 
-.container {
-  width: 90%;
-  max-width: 350px;
+.calculator {
+  width: 300px;
   padding: 20px;
   border-radius: 20px;
-
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.08);
   backdrop-filter: blur(20px);
-
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
   color: white;
-  box-sizing: border-box;
 }
 
-h2, h3 {
+h2 {
   text-align: center;
+  margin-bottom: 10px;
 }
 
-input {
+#display {
   width: 100%;
-  padding: 12px;
-  margin: 6px 0;
+  height: 55px;
   border-radius: 10px;
   border: none;
-  outline: none;
-
+  padding: 10px;
+  font-size: 20px;
+  text-align: right;
   background: rgba(255,255,255,0.1);
   color: white;
-  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
 button {
-  width: 100%;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
   border: none;
-  margin-top: 8px;
-
   background: linear-gradient(135deg, #00f7ff, #0072ff);
   color: white;
-
+  font-size: 16px;
   cursor: pointer;
-  transition: 0.3s;
-  box-sizing: border-box;
+  transition: 0.2s;
 }
 
 button:hover {
@@ -73,175 +67,105 @@ button:hover {
   background: #005bea;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  max-height: 130px;
-  overflow-y: auto;
+.equal {
+  background: #00ff99;
+  color: black;
 }
 
-li {
-  background: rgba(255,255,255,0.2);
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 8px;
-  word-wrap: break-word;
+.clear {
+  background: #ff4d4d;
 }
 
-.section {
+.delete {
+  background: #ff944d;
+}
+
+.zero {
+  grid-column: span 2;
+}
+
+/* Continue Button */
+.continue-btn {
   margin-top: 15px;
+  width: 100%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h2>🌦️ Weather Journal</h2>
+<div class="calculator">
+  <h2>Calculator Pro</h2>
 
-  <!-- Inputs -->
-  <input type="date" id="date">
-  <input type="number" id="temp" placeholder="Temperature °C">
-  <input type="text" id="note" placeholder="Note (Sunny, Rainy...)">
-  <button onclick="addEntry()">Add Entry</button>
+  <input type="text" id="display" disabled>
 
-  <!-- Entries -->
-  <div class="section">
-    <h3>Entries</h3>
-    <ul id="entries"></ul>
+  <div class="buttons">
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="delete" onclick="deleteLast()">⌫</button>
+    <button onclick="append('/')">/</button>
+    <button onclick="append('*')">*</button>
+
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button onclick="append('-')">-</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button onclick="append('+')">+</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button class="equal" onclick="calculate()">=</button>
+
+    <button class="zero" onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
   </div>
 
-  <!-- Stats -->
-  <div class="section">
-    <h3>Stats</h3>
-    <p>Average Temp: <span id="avg">0</span> °C</p>
-    <p>Best Day: <span id="best">-</span></p>
-    <p>Worst Day: <span id="worst">-</span></p>
-  </div>
-
-  <!-- Weekly -->
-  <div class="section">
-    <h3>Weekly Summary</h3>
-    <p>This Week Avg: <span id="weekAvg">0</span> °C</p>
-    <p>Entries This Week: <span id="weekCount">0</span></p>
-  </div>
-
-  <!-- Export -->
-  <button onclick="exportData()">Export Report</button>
-
-  <!-- Navigation -->
-  <button onclick="goToWeather()">Go to Weather Page 🌤️</button>
+  <!-- Continue Button -->
+  <button class="continue-btn" onclick="goToNext()">Continue ➡️</button>
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("weatherData")) || [];
+let display = document.getElementById("display");
 
-// Add entry
-function addEntry() {
-  let date = document.getElementById("date").value;
-  let temp = document.getElementById("temp").value;
-  let note = document.getElementById("note").value;
+function append(value) {
+  display.value += value;
+}
 
-  if (!date || !temp || !note) {
-    alert("Please fill all fields");
-    return;
+function clearDisplay() {
+  display.value = "";
+}
+
+function deleteLast() {
+  display.value = display.value.slice(0, -1);
+}
+
+function calculate() {
+  try {
+    display.value = eval(display.value);
+  } catch {
+    display.value = "Error";
   }
-
-  let entry = {
-    date: date,
-    temp: Number(temp),
-    note: note
-  };
-
-  data.push(entry);
-  localStorage.setItem("weatherData", JSON.stringify(data));
-
-  displayEntries();
-  calculateStats();
-  calculateWeeklySummary();
 }
 
-// Show entries
-function displayEntries() {
-  let list = document.getElementById("entries");
-  list.innerHTML = "";
-
-  data.forEach(e => {
-    let li = document.createElement("li");
-    li.innerText = `${e.date} - ${e.temp}°C - ${e.note}`;
-    list.appendChild(li);
-  });
-}
-
-// Stats
-function calculateStats() {
-  if (data.length === 0) return;
-
-  let total = 0;
-  let best = data[0];
-  let worst = data[0];
-
-  data.forEach(e => {
-    total += e.temp;
-    if (e.temp > best.temp) best = e;
-    if (e.temp < worst.temp) worst = e;
-  });
-
-  document.getElementById("avg").innerText = (total / data.length).toFixed(2);
-  document.getElementById("best").innerText = best.date;
-  document.getElementById("worst").innerText = worst.date;
-}
-
-// Weekly summary
-function calculateWeeklySummary() {
-  let today = new Date();
-  let weekAgo = new Date();
-  weekAgo.setDate(today.getDate() - 7);
-
-  let weekData = data.filter(e => {
-    let d = new Date(e.date);
-    return d >= weekAgo && d <= today;
-  });
-
-  document.getElementById("weekCount").innerText = weekData.length;
-
-  if (weekData.length === 0) {
-    document.getElementById("weekAvg").innerText = 0;
-    return;
+/* Keyboard Support */
+document.addEventListener("keydown", function(e) {
+  if (!isNaN(e.key) || "+-*/.".includes(e.key)) {
+    append(e.key);
+  } else if (e.key === "Enter") {
+    calculate();
+  } else if (e.key === "Backspace") {
+    deleteLast();
   }
+});
 
-  let total = 0;
-  weekData.forEach(e => total += e.temp);
-
-  document.getElementById("weekAvg").innerText = (total / weekData.length).toFixed(2);
+/* Navigation */
+function goToNext() {
+  window.location.href = "weather.html"; // change if needed
 }
-
-// Export
-function exportData() {
-  let text = "Weather Journal Report\n\n";
-
-  data.forEach(e => {
-    text += `${e.date} - ${e.temp}°C - ${e.note}\n`;
-  });
-
-  let blob = new Blob([text], { type: "text/plain" });
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "weather_report.txt";
-  a.click();
-}
-
-// Navigate
-function goToWeather() {
-  window.location.href = "weather.html";
-}
-
-// Load on start
-window.onload = function () {
-  displayEntries();
-  calculateStats();
-  calculateWeeklySummary();
-};
 </script>
 
 </body>
