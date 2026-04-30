@@ -2,192 +2,247 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Calculator Pro</title>
+  <title>Weather Journal</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-  <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
 body {
   margin: 0;
   min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  font-family: 'Poppins', sans-serif;
-
-  /* NEW CLEAN BACKGROUND */
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-
-  overflow: hidden;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  overflow-x: hidden;
 }
 
-/* Calculator */
-.calculator {
+.container {
   width: 90%;
-  max-width: 320px;
+  max-width: 350px;
+  padding: 20px;
+  border-radius: 20px;
 
-  padding: 25px;
-  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
 
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(15px);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.6),
-    inset 0 0 10px rgba(255,255,255,0.1);
-
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
   color: white;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* Title */
-.title {
+h2, h3 {
   text-align: center;
-  margin-bottom: 15px;
 }
 
-/* Display */
-#display {
+input {
   width: 100%;
-  height: 65px;
-
-  border-radius: 12px;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 10px;
   border: none;
   outline: none;
 
-  padding: 10px;
-  font-size: 24px;
-  text-align: right;
-
-  background: rgba(255,255,255,0.08);
-  color: white;
-
-  box-sizing: border-box;
-
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-/* Grid */
-.buttons {
-  margin-top: 18px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-/* Buttons */
-button {
-  padding: 15px;
-  border-radius: 12px;
-  border: none;
-
   background: rgba(255,255,255,0.1);
+  color: white;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 8px;
+
+  background: linear-gradient(135deg, #00f7ff, #0072ff);
   color: white;
 
   cursor: pointer;
-  transition: 0.2s;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: 0.3s;
+  box-sizing: border-box;
 }
 
-/* Hover */
 button:hover {
-  transform: scale(1.05);
-  background: #00c6ff;
+  transform: translateY(-2px);
+  background: #005bea;
 }
 
-/* Special buttons */
-button:nth-child(1) { background: #ff4d4d; }
-button:nth-child(2) { background: #ff944d; }
-
-button:nth-child(4),
-button:nth-child(8),
-button:nth-child(12),
-button:nth-child(16) {
-  background: #00c6ff;
+ul {
+  list-style: none;
+  padding: 0;
+  max-height: 130px;
+  overflow-y: auto;
 }
 
-/* Equals */
-button:nth-child(16) {
-  background: #00ff99;
-  color: black;
+li {
+  background: rgba(255,255,255,0.2);
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  word-wrap: break-word;
 }
 
-/* Zero */
-.zero {
-  grid-column: span 2;
-}</style>
+.section {
+  margin-top: 15px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="calculator">
-  <h2 class="title">Calculator Pro</h2>
+<div class="container">
+  <h2>🌦️ Weather Journal</h2>
 
-  <!-- Display -->
-  <input type="text" id="display" disabled>
+  <!-- Inputs -->
+  <input type="date" id="date">
+  <input type="number" id="temp" placeholder="Temperature °C">
+  <input type="text" id="note" placeholder="Note (Sunny, Rainy...)">
+  <button onclick="addEntry()">Add Entry</button>
 
-  <!-- Buttons -->
-  <div class="buttons">
-    <button onclick="clearDisplay()">C</button>
-    <button onclick="deleteLast()">⌫</button>
-    <button onclick="appendValue('/')">/</button>
-    <button onclick="appendValue('*')">*</button>
-
-    <button onclick="appendValue('7')">7</button>
-    <button onclick="appendValue('8')">8</button>
-    <button onclick="appendValue('9')">9</button>
-    <button onclick="appendValue('-')">-</button>
-
-    <button onclick="appendValue('4')">4</button>
-    <button onclick="appendValue('5')">5</button>
-    <button onclick="appendValue('6')">6</button>
-    <button onclick="appendValue('+')">+</button>
-
-    <button onclick="appendValue('1')">1</button>
-    <button onclick="appendValue('2')">2</button>
-    <button onclick="appendValue('3')">3</button>
-    <button onclick="calculate()">=</button>
-
-    <button class="zero" onclick="appendValue('0')">0</button>
-    <button onclick="appendValue('.')">.</button>
+  <!-- Entries -->
+  <div class="section">
+    <h3>Entries</h3>
+    <ul id="entries"></ul>
   </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <h3>Stats</h3>
+    <p>Average Temp: <span id="avg">0</span> °C</p>
+    <p>Best Day: <span id="best">-</span></p>
+    <p>Worst Day: <span id="worst">-</span></p>
+  </div>
+
+  <!-- Weekly -->
+  <div class="section">
+    <h3>Weekly Summary</h3>
+    <p>This Week Avg: <span id="weekAvg">0</span> °C</p>
+    <p>Entries This Week: <span id="weekCount">0</span></p>
+  </div>
+
+  <!-- Export -->
+  <button onclick="exportData()">Export Report</button>
+
+  <!-- Navigation -->
+  <button onclick="goToWeather()">Go to Weather Page 🌤️</button>
 </div>
 
-<script>let display = document.getElementById("display");
+<script>
+let data = JSON.parse(localStorage.getItem("weatherData")) || [];
 
-function appendValue(value) {
-  display.value += value;
-}
+// Add entry
+function addEntry() {
+  let date = document.getElementById("date").value;
+  let temp = document.getElementById("temp").value;
+  let note = document.getElementById("note").value;
 
-function clearDisplay() {
-  display.value = "";
-}
-
-function deleteLast() {
-  display.value = display.value.slice(0, -1);
-}
-
-function calculate() {
-  try {
-    display.value = eval(display.value);
-  } catch {
-    display.value = "Error";
+  if (!date || !temp || !note) {
+    alert("Please fill all fields");
+    return;
   }
+
+  let entry = {
+    date: date,
+    temp: Number(temp),
+    note: note
+  };
+
+  data.push(entry);
+  localStorage.setItem("weatherData", JSON.stringify(data));
+
+  displayEntries();
+  calculateStats();
+  calculateWeeklySummary();
 }
 
-// Keyboard support
-document.addEventListener("keydown", function(e) {
-  if (!isNaN(e.key) || "+-*/.".includes(e.key)) {
-    appendValue(e.key);
-  } else if (e.key === "Enter") {
-    calculate();
-  } else if (e.key === "Backspace") {
-    deleteLast();
+// Show entries
+function displayEntries() {
+  let list = document.getElementById("entries");
+  list.innerHTML = "";
+
+  data.forEach(e => {
+    let li = document.createElement("li");
+    li.innerText = `${e.date} - ${e.temp}°C - ${e.note}`;
+    list.appendChild(li);
+  });
+}
+
+// Stats
+function calculateStats() {
+  if (data.length === 0) return;
+
+  let total = 0;
+  let best = data[0];
+  let worst = data[0];
+
+  data.forEach(e => {
+    total += e.temp;
+    if (e.temp > best.temp) best = e;
+    if (e.temp < worst.temp) worst = e;
+  });
+
+  document.getElementById("avg").innerText = (total / data.length).toFixed(2);
+  document.getElementById("best").innerText = best.date;
+  document.getElementById("worst").innerText = worst.date;
+}
+
+// Weekly summary
+function calculateWeeklySummary() {
+  let today = new Date();
+  let weekAgo = new Date();
+  weekAgo.setDate(today.getDate() - 7);
+
+  let weekData = data.filter(e => {
+    let d = new Date(e.date);
+    return d >= weekAgo && d <= today;
+  });
+
+  document.getElementById("weekCount").innerText = weekData.length;
+
+  if (weekData.length === 0) {
+    document.getElementById("weekAvg").innerText = 0;
+    return;
   }
-});
+
+  let total = 0;
+  weekData.forEach(e => total += e.temp);
+
+  document.getElementById("weekAvg").innerText = (total / weekData.length).toFixed(2);
+}
+
+// Export
+function exportData() {
+  let text = "Weather Journal Report\n\n";
+
+  data.forEach(e => {
+    text += `${e.date} - ${e.temp}°C - ${e.note}\n`;
+  });
+
+  let blob = new Blob([text], { type: "text/plain" });
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "weather_report.txt";
+  a.click();
+}
+
+// Navigate
+function goToWeather() {
+  window.location.href = "weather.html";
+}
+
+// Load on start
+window.onload = function () {
+  displayEntries();
+  calculateStats();
+  calculateWeeklySummary();
+};
 </script>
+
 </body>
 </html>
